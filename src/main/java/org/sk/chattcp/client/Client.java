@@ -157,7 +157,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 JPanel panel = new JPanel(new GridLayout(2, 2));
                 JTextField usernameField = new JTextField();
                 JPasswordField passwordField = new JPasswordField();
-                panel.add(new JLabel("Nombre o nick:"));
+                panel.add(new JLabel("Nombre de usuario:"));
                 panel.add(usernameField);
                 panel.add(new JLabel("Contraseña:"));
                 panel.add(passwordField);
@@ -184,7 +184,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 JPanel panel = new JPanel(new GridLayout(2, 2));
                 JTextField usernameField = new JTextField();
                 JPasswordField passwordField = new JPasswordField();
-                panel.add(new JLabel("Nombre o nick:"));
+                panel.add(new JLabel("Nombre de usuario:"));
                 panel.add(usernameField);
                 panel.add(new JLabel("Contraseña:"));
                 panel.add(passwordField);
@@ -215,7 +215,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
         try {
             s = new Socket("localhost", 44444);
             Client cliente = new Client(s, Client.currentUser);
-            cliente.setBounds(0, 0, 540, 400);
+            cliente.setBounds(0, 0, 840, 620);
             cliente.setVisible(true);
             new Thread(cliente).start();
         } catch (IOException e) {
