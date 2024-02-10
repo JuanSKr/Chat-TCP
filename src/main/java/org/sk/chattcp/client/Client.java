@@ -82,7 +82,11 @@ public class Client extends JFrame implements ActionListener, Runnable {
     // accion cuando pulsamos botones
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botonEnviar) { // SE PULSA EL ENVIAR
-            String content = txtMensaje.getText();
+            String content = txtMensaje.getText().trim();
+            if (content.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No puedes enviar un mensaje vacio", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (Client.currentUser == null) {
                 throw new RuntimeException("User not found: " + Client.currentUser.getUsername());
             }
