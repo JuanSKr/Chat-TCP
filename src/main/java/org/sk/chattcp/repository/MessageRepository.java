@@ -5,6 +5,8 @@ import org.hibernate.Transaction;
 import org.sk.chattcp.entity.Message;
 import org.sk.chattcp.functionality.hibernate.HibernateUtil;
 
+import java.util.List;
+
 public class MessageRepository {
     public Message save(Message message) {
         Session session = HibernateUtil.openSession();
@@ -28,6 +30,13 @@ public class MessageRepository {
         session.delete(message);
         tx.commit();
         session.close();
+    }
+
+    public List<Message> findAll() {
+        Session session = HibernateUtil.openSession();
+        List<Message> messages = session.createQuery("from Message", Message.class).list();
+        session.close();
+        return messages;
     }
 
 }
