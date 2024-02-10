@@ -4,6 +4,8 @@ module org.sk.chattcp {
 
     requires org.kordamp.bootstrapfx.core;
     requires org.hibernate.orm.core;
+    requires java.persistence;
+    requires static lombok;
 
     opens org.sk.chattcp to javafx.fxml;
     exports org.sk.chattcp;
