@@ -1,4 +1,4 @@
-package org.sk.chattcp.functionality;
+package org.sk.chattcp.server;
 
 import org.sk.chattcp.functionality.connection.Conexion;
 import org.sk.chattcp.functionality.threads.CommonThreads;

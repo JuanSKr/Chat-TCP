@@ -149,30 +149,60 @@ public class Client extends JFrame implements ActionListener, Runnable {
         User currentUser = null;
 
         while (true) {
-            String option = JOptionPane.showInputDialog("1. Registrarse\n2. Iniciar sesion");
+            Object[] options = {"Registrarse", "Iniciar sesion"};
+            int option = JOptionPane.showOptionDialog(null, "¡Bienvenido! \nElige una opción", "Chat-TCP",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-            if ("1".equals(option)) {
-                nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
-                password = JOptionPane.showInputDialog("Introduce tu contraseña:");
-                User user = new User();
-                user.setUsername(nombre);
-                user.setPassword(password);
-                try {
-                    userRepository.save(user);
-                    Client.currentUser = userRepository.findByUsername(nombre);
-                    break;
-                } catch (RuntimeException e) {
-                    JOptionPane.showMessageDialog(null, "El nombre de usuario ya existe");
+            if (option == 0) { // Registrarse
+                JPanel panel = new JPanel(new GridLayout(2, 2));
+                JTextField usernameField = new JTextField();
+                JPasswordField passwordField = new JPasswordField();
+                panel.add(new JLabel("Nombre o nick:"));
+                panel.add(usernameField);
+                panel.add(new JLabel("Contraseña:"));
+                panel.add(passwordField);
+                int result = JOptionPane.showConfirmDialog(null, panel, "Registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (result == JOptionPane.OK_OPTION) {
+                    nombre = usernameField.getText();
+                    password = new String(passwordField.getPassword());
+                    if (nombre.trim().isEmpty() || password.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "El nombre y la contraseña no pueden estar vacíos");
+                        continue;
+                    }
+                    User user = new User();
+                    user.setUsername(nombre);
+                    user.setPassword(password);
+                    try {
+                        userRepository.save(user);
+                        Client.currentUser = userRepository.findByUsername(nombre);
+                        break;
+                    } catch (RuntimeException e) {
+                        JOptionPane.showMessageDialog(null, "El nombre de usuario ya existe");
+                    }
                 }
-            } else if ("2".equals(option)) {
-                nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
-                password = JOptionPane.showInputDialog("Introduce tu contraseña:");
-                User user = userRepository.findByUsername(nombre);
-                if (user != null && password.equals(user.getPassword())) {
-                    Client.currentUser = user;
-                    break;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña incorrectos");
+            } else if (option == 1) { // Iniciar sesion
+                JPanel panel = new JPanel(new GridLayout(2, 2));
+                JTextField usernameField = new JTextField();
+                JPasswordField passwordField = new JPasswordField();
+                panel.add(new JLabel("Nombre o nick:"));
+                panel.add(usernameField);
+                panel.add(new JLabel("Contraseña:"));
+                panel.add(passwordField);
+                int result = JOptionPane.showConfirmDialog(null, panel, "Inicio de sesión", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (result == JOptionPane.OK_OPTION) {
+                    nombre = usernameField.getText();
+                    password = new String(passwordField.getPassword());
+                    if (nombre.trim().isEmpty() || password.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "El nombre y la contraseña no pueden estar vacíos");
+                        continue;
+                    }
+                    User user = userRepository.findByUsername(nombre);
+                    if (user != null && password.equals(user.getPassword())) {
+                        Client.currentUser = user;
+                        break;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña incorrectos");
+                    }
                 }
             }
         }

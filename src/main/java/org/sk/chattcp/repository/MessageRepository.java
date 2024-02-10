@@ -70,7 +70,7 @@ public class MessageRepository {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conexion.getConnection().prepareStatement("SELECT m.id, m.content, m.date, u.id as sender_id, u.username as sender_username FROM message m JOIN user u ON m.sender_id = u.id");
+            ps = conexion.getConnection().prepareStatement("SELECT m.id, m.content, m.date, u.id as sender_id, u.username as sender_username FROM message m JOIN user u ON m.sender_id = u.id ORDER BY m.id ASC");
             rs = ps.executeQuery();
             while (rs.next()) {
                 Message message = new Message();
