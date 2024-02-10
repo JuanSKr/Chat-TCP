@@ -42,14 +42,17 @@ public class ThreadServerChat extends Thread {
                     break;
                 }
                 String[] parts = cadena.split(":");
-                User sender = userRepository.findById(Integer.parseInt(parts[0]));
-                String content = parts[1];
-                Message message = new Message();
-                message.setSender(sender);
-                message.setContent(content);
-                message.setDate(LocalDateTime.now());
-                messageRepository.save(message);
-                EnviarMensajesaTodos();
+                // Verifica si la cadena es un número antes de intentar convertirla
+                if (parts[0].matches("\\d+")) {
+                    User sender = userRepository.findById(Integer.parseInt(parts[0]));
+                    String content = parts[1];
+                    Message message = new Message();
+                    message.setSender(sender);
+                    message.setContent(content);
+                    message.setDate(LocalDateTime.now());
+                    messageRepository.save(message);
+                    messagesToAll();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -65,14 +68,14 @@ public class ThreadServerChat extends Thread {
     }
 
     // Envía los mensajes a todos los clientes
-    private void EnviarMensajesaTodos() {
+    private void messagesToAll() {
         List<Message> messages = messageRepository.findAll();
         for (Socket s : comun.conexiones) {
             if (!s.isClosed()) {
                 try {
                     DataOutputStream fsalida = new DataOutputStream(s.getOutputStream());
                     for (Message message : messages) {
-                        fsalida.writeUTF(message.getSender().getUsername() + ":" + message.getContent());
+                        fsalida.writeUTF(message.getSender().getUsername() + ": " + message.getContent());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
