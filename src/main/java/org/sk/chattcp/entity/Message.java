@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 
 public class Message {
-    private long id;
+    private int id;
     private User sender;
     private String content;
     private LocalDateTime date;

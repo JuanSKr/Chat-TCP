@@ -42,7 +42,7 @@ public class ThreadServerChat extends Thread {
                     break;
                 }
                 String[] parts = cadena.split(":");
-                User sender = userRepository.findById(Long.parseLong(parts[0]));
+                User sender = userRepository.findById(Integer.parseInt(parts[0]));
                 String content = parts[1];
                 Message message = new Message();
                 message.setSender(sender);
