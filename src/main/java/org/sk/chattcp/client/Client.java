@@ -95,6 +95,8 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 fsalida.writeUTF(texto);
                 fsalida.writeUTF("*");
                 repetir = false; // Para salir del bucle
+                // Agrega el mensaje a la interfaz de usuario del cliente
+                textarea1.append(texto + "\n");
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -102,13 +104,16 @@ public class Client extends JFrame implements ActionListener, Runnable {
     }
 
     public void run() {
+        String texto = " > Entra en el Chat ... " + currentUser.getUsername();
+        // Agrega el mensaje a la interfaz de usuario del cliente
+        textarea1.append(texto + "\n");
 
         while (repetir) {
             try {
                 List<Message> messages = messageRepository.findAll();
                 StringBuilder sb = new StringBuilder();
                 for (Message message : messages) {
-                    sb.append(message.getSender().getUsername()).append(":").append(message.getContent()).append("\n");
+                    sb.append(message.getSender().getUsername()).append(": ").append(message.getContent()).append("\n");
                 }
                 textarea1.setText(sb.toString());
             } catch (Exception e) {
@@ -162,7 +167,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
             }
         }
 
-        if (nombre.trim().length() == 0) {
+        if (nombre.trim().isEmpty()) {
             System.out.println("El nombre no puede estar vacío...");
             return;
         }
