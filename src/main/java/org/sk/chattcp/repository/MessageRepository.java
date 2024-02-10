@@ -19,8 +19,9 @@ public class MessageRepository {
     }
 
     public void createTable() {
-        try (Statement stmt = conexion.getConnection().createStatement()) {
-
+        Statement stmt = null;
+        try {
+            stmt = conexion.getConnection().createStatement();
             String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS message (" +
                     "    id               BIGINT AUTO_INCREMENT," +
                     "    sender_id INT," +
@@ -32,24 +33,45 @@ public class MessageRepository {
             stmt.executeUpdate(CREATE_TABLE_SQL);
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public void save(Message message) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("INSERT INTO message (sender_id, content, date) VALUES (?, ?, ?)")) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("INSERT INTO message (sender_id, content, date) VALUES (?, ?, ?)");
             ps.setInt(1, message.getSender().getId());
             ps.setString(2, message.getContent());
             ps.setTimestamp(3, Timestamp.valueOf(message.getDate()));
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public List<Message> findAll() {
         List<Message> messages = new ArrayList<>();
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT m.id, m.content, m.date, u.id as sender_id, u.username as sender_username FROM message m JOIN user u ON m.sender_id = u.id")) {
-            ResultSet rs = ps.executeQuery();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("SELECT m.id, m.content, m.date, u.id as sender_id, u.username as sender_username FROM message m JOIN user u ON m.sender_id = u.id");
+            rs = ps.executeQuery();
             while (rs.next()) {
                 Message message = new Message();
                 message.setId(rs.getInt("id"));
@@ -63,12 +85,29 @@ public class MessageRepository {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return messages;
     }
 
     public void update(Message message) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("UPDATE message SET sender_id = ?, content = ?, date = ? WHERE id = ?")) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("UPDATE message SET sender_id = ?, content = ?, date = ? WHERE id = ?");
             ps.setInt(1, message.getSender().getId());
             ps.setString(2, message.getContent());
             ps.setTimestamp(3, Timestamp.valueOf(message.getDate()));
@@ -76,6 +115,14 @@ public class MessageRepository {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -20,8 +20,9 @@ public class UserRepository {
     }
 
     public void createTable() {
-        try (Statement stmt = conexion.getConnection().createStatement()) {
-
+        Statement stmt = null;
+        try {
+            stmt = conexion.getConnection().createStatement();
             String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS user (" +
                     "    id               INT AUTO_INCREMENT," +
                     "    username VARCHAR(255) UNIQUE," +
@@ -31,23 +32,44 @@ public class UserRepository {
             stmt.executeUpdate(CREATE_TABLE_SQL);
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public void save(User user) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("INSERT INTO user (username, password) VALUES (?, ?)")) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("INSERT INTO user (username, password) VALUES (?, ?)");
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public User findByUsername(String username) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE username = ?")) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE username = ?");
             ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
                 user.setId(rs.getInt("id"));
@@ -59,13 +81,31 @@ public class UserRepository {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public User findById(int id) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE id = ?")) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE id = ?");
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
                 User user = new User();
                 user.setId(rs.getInt("id"));
@@ -77,13 +117,31 @@ public class UserRepository {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user")) {
-            ResultSet rs = ps.executeQuery();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("SELECT * FROM user");
+            rs = ps.executeQuery();
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getInt("id"));
@@ -93,18 +151,43 @@ public class UserRepository {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return users;
     }
 
     public void update(User user) {
-        try (PreparedStatement ps = conexion.getConnection().prepareStatement("UPDATE user SET username = ?, password = ? WHERE id = ?")) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("UPDATE user SET username = ?, password = ? WHERE id = ?");
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
             ps.setInt(3, user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
