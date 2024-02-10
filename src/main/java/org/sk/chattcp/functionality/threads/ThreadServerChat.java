@@ -43,7 +43,7 @@ public class ThreadServerChat extends Thread {
                     break;
                 }
                 String[] parts = cadena.split(":");
-                // Verifica si la cadena es un número antes de intentar convertirla
+                // Verifica si el String es un numero antes de intentar convertirlo
                 if (parts[0].matches("\\d+")) {
                     User sender = userRepository.findById(Integer.parseInt(parts[0]));
                     String content = parts[1];
@@ -68,7 +68,7 @@ public class ThreadServerChat extends Thread {
         }
     }
 
-    // Envía los mensajes a todos los clientes
+    // Envia los mensajes a todos los clientes
     private void messagesToAll() {
         List<Message> messages = messageRepository.findAll();
         for (Socket s : comun.conexiones) {

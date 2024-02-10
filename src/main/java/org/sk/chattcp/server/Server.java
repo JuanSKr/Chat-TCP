@@ -19,7 +19,7 @@ public class Server {
         MessageRepository messageRepository = new MessageRepository(conexion);
         userRepository.createTable(); // Crear tabla de usuarios
         messageRepository.createTable(); // Crear tabla de mensajes
-        CommonThreads comun=new CommonThreads(userRepository, messageRepository); // Aquí se pasa userRepository y messageRepository al constructor
+        CommonThreads comun=new CommonThreads(userRepository, messageRepository); // Aqui se pasa userRepository y messageRepository al constructor
         try {
             servidor = new ServerSocket(puerto);
             System.out.println("Servidor en marcha...");

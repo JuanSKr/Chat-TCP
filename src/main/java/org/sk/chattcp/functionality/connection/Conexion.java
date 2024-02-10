@@ -13,7 +13,6 @@ public class Conexion {
 
     public void setConexion(){
         try {
-            // db parameters
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/ChatTCP?createDatabaseIfNotExist=true","root","");
 
             System.out.println("Connection to MySql has been established.");

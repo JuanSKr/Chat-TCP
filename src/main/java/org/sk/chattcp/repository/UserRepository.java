@@ -190,4 +190,23 @@ public class UserRepository {
             }
         }
     }
+
+    public void delete(User user) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("DELETE FROM user WHERE id = ?");
+            ps.setInt(1, user.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

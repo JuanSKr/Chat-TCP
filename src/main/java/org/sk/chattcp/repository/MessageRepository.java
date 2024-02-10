@@ -125,4 +125,23 @@ public class MessageRepository {
             }
         }
     }
+
+    public void delete(Message message) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.getConnection().prepareStatement("DELETE FROM message WHERE id = ?");
+            ps.setInt(1, message.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
