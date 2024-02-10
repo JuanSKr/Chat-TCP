@@ -5,6 +5,8 @@ import org.sk.chattcp.entity.User;
 import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,5 +42,18 @@ public class CommonThreads {
         message.setContent(content);
         message.setDate(LocalDateTime.now());
         messageRepository.save(message);
+    }
+
+    public void sendToAllExcept(String message, Socket except) {
+        for (Socket s : conexiones) {
+            if (!s.equals(except)) {
+                try {
+                    DataOutputStream fsalida = new DataOutputStream(s.getOutputStream());
+                    fsalida.writeUTF(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

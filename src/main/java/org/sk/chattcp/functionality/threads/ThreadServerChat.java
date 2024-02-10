@@ -37,6 +37,7 @@ public class ThreadServerChat extends Thread {
         while (true) {
             try {
                 String cadena = fentrada.readUTF(); //Lee el mensaje enviado por el cliente
+
                 if (cadena.trim().equals("*")) {// El cliente se desconecta
                     comun.delConexion(socket);
                     break;
