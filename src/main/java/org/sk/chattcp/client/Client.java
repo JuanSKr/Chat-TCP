@@ -151,9 +151,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 User user = new User();
                 user.setUsername(nombre);
                 user.setPassword(password);
-                userRepository.save(user);
-                Client.currentUser = userRepository.findByUsername(nombre);
-                break;
+                try {
+                    userRepository.save(user);
+                    Client.currentUser = userRepository.findByUsername(nombre);
+                    break;
+                } catch (RuntimeException e) {
+                    JOptionPane.showMessageDialog(null, "El nombre de usuario ya existe");
+                }
             } else if ("2".equals(option)) {
                 nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
                 password = JOptionPane.showInputDialog("Introduce tu contraseña:");
