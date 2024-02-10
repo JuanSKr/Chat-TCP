@@ -29,5 +29,5 @@ public class MessageRepository {
         tx.commit();
         session.close();
     }
-    
+
 }

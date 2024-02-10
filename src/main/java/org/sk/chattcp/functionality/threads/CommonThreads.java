@@ -1,44 +1,43 @@
 package org.sk.chattcp.functionality.threads;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.sk.chattcp.entity.Message;
 import org.sk.chattcp.entity.User;
+import org.sk.chattcp.repository.MessageRepository;
+import org.sk.chattcp.repository.UserRepository;
 
 import java.net.Socket;
 import java.util.ArrayList;
-@Getter
-@Setter
+
 public class CommonThreads {
-    ArrayList<Socket> conexiones=new ArrayList<>();
-    ArrayList<Message> mensajes=new ArrayList<>();
-    ArrayList<User> usuarios=new ArrayList<>();
+    ArrayList<Socket> conexiones = new ArrayList<>();
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
-    String stMensajes;
-
-    public CommonThreads(){
-        stMensajes ="";
-        usuarios.add(new User(1L, "Antonio", "1234"));
-        usuarios.add(new User(2L, "Ana", "1234"));
+    public CommonThreads() {
+        this.userRepository = new UserRepository();
+        this.messageRepository = new MessageRepository();
     }
 
-    //Añade el socket a la lista de sockets
-    public void addConexion(Socket socket){
+    public void addConexion(Socket socket) {
         conexiones.add(socket);
     }
 
-    //Busca el socket que le pasan y lo elimina
-    public void delConexion(Socket socket){
-        if(conexiones.size()>0) {
-            for (Socket s : conexiones) {
-                if (s.equals(socket)) {
-                    conexiones.remove(s);
-                }
-            }
-        }
+    public void delConexion(Socket socket) {
+        conexiones.remove(socket);
     }
 
-    public synchronized void setStMensajes(String stMensajes) {
-        this.stMensajes = stMensajes;
+    public void createUser(String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        userRepository.save(user);
+    }
+
+    public void sendMessage(User sender, User receiver, String content) {
+        Message message = new Message();
+        message.setSender(sender);
+        message.setReceiver(receiver);
+        message.setContent(content);
+        messageRepository.save(message);
     }
 }
