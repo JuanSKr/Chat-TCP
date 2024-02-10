@@ -1,5 +1,10 @@
 package org.sk.chattcp.client;
 
+import org.sk.chattcp.entity.Message;
+import org.sk.chattcp.entity.User;
+import org.sk.chattcp.repository.MessageRepository;
+import org.sk.chattcp.repository.UserRepository;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +12,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class Client extends JFrame implements ActionListener, Runnable {
     private static final long serialVersionUID = 1L;
@@ -22,10 +29,12 @@ public class Client extends JFrame implements ActionListener, Runnable {
     JButton botonSalir = new JButton("Salir");
     boolean repetir = true;
 
+    MessageRepository messageRepository;
+    UserRepository userRepository;
+
     // constructor
     public Client(Socket s, String nombre) {
         super(" Conexión del cliente del chat: " + nombre);
-        //Creo los elementos gráficos de Swing
         setLayout(null);
 
         txtMensaje.setBounds(10, 10, 400, 30);
@@ -58,22 +67,24 @@ public class Client extends JFrame implements ActionListener, Runnable {
             e.printStackTrace();
             System.exit(0);
         }
-    }// fin constructor
+
+        this.messageRepository = new MessageRepository();
+        this.userRepository = new UserRepository();
+    }
 
     // accion cuando pulsamos botones
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botonEnviar) { // SE PULSA EL ENVIAR
-
             if (txtMensaje.getText().trim().length() == 0)
                 return;
-            String texto = nombre + "> " + txtMensaje.getText();
-
-            try {
-                txtMensaje.setText("");
-                fsalida.writeUTF(texto);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            User sender = userRepository.findByUsername(nombre);
+            String content = txtMensaje.getText();
+            Message message = new Message();
+            message.setSender(sender);
+            message.setContent(content);
+            message.setDate(LocalDateTime.now());
+            messageRepository.save(message);
+            txtMensaje.setText("");
         }
         if (e.getSource() == botonSalir) { // SE PULSA BOTON SALIR
             String texto = " > Abandona el Chat ... " + nombre;
@@ -85,22 +96,23 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 e1.printStackTrace();
             }
         }
-    }// accion botones
+    }
 
     public void run() {
-        String texto = "";
         while (repetir) {
             try {
-                texto = fentrada.readUTF();
-                textarea1.setText(texto);
-
-            } catch (IOException e) {
-                // este error sale cuando el servidor se cierra
+                List<Message> messages = messageRepository.findAll();
+                StringBuilder sb = new StringBuilder();
+                for (Message message : messages) {
+                    sb.append(message.getSender().getUsername()).append(":").append(message.getContent()).append("\n");
+                }
+                textarea1.setText(sb.toString());
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Fallo servidor\n" + e.getMessage(),
                         "<<MENSAJE DE ERROR:2>>", JOptionPane.ERROR_MESSAGE);
                 repetir = false;
             }
-        } // while
+        }
 
         try {
             socket.close();
@@ -108,7 +120,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }// run
+    }
 
     public static void main(String args[]) {
         int puerto = 44444;
@@ -122,20 +134,14 @@ public class Client extends JFrame implements ActionListener, Runnable {
         }
 
         try {
-            //Se conecta al servidor
             s = new Socket("localhost", 44444);
-            //Usa el socket y el nombre para crear un nuevo Cliente
             Client cliente = new Client(s, nombre);
-            //Le da un tamaño a la ventana y la hace visible
             cliente.setBounds(0, 0, 540, 400);
             cliente.setVisible(true);
             new Thread(cliente).start();
-
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Fallo servidor\n" + e.getMessage(),
                     "<<MENSAJE DE ERROR:1>>", JOptionPane.ERROR_MESSAGE);
         }
-
-    }// main
-}// ..ClienteChat
-
+    }
+}
