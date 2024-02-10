@@ -123,10 +123,34 @@ public class Client extends JFrame implements ActionListener, Runnable {
     }
 
     public static void main(String args[]) {
+        UserRepository userRepository = new UserRepository();
+        String nombre = "";
+        String password = "";
         int puerto = 44444;
         Socket s = null;
 
-        String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
+        while (true) {
+            String option = JOptionPane.showInputDialog("1. Registrarse\n2. Iniciar sesion");
+
+            if ("1".equals(option)) {
+                nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
+                password = JOptionPane.showInputDialog("Introduce tu contraseña:");
+                User user = new User();
+                user.setUsername(nombre);
+                user.setPassword(password);
+                userRepository.save(user);
+                break;
+            } else if ("2".equals(option)) {
+                nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
+                password = JOptionPane.showInputDialog("Introduce tu contraseña:");
+                User user = userRepository.findByUsername(nombre);
+                if (user != null && password.equals(user.getPassword())) {
+                    break;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña incorrectos");
+                }
+            }
+        }
 
         if (nombre.trim().length() == 0) {
             System.out.println("El nombre está vacío....");
