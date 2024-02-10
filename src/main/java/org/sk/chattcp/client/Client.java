@@ -7,6 +7,7 @@ import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
@@ -37,20 +38,25 @@ public class Client extends JFrame implements ActionListener, Runnable {
     // constructor
     public Client(Socket s, User currentUser) {
         super(" Conexión del cliente del chat: " + Client.currentUser.getUsername());
-        setLayout(null);
+        setLayout(new BorderLayout());
 
-        txtMensaje.setBounds(10, 10, 400, 30);
-        add(txtMensaje);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(txtMensaje, BorderLayout.CENTER);
+        topPanel.add(botonEnviar, BorderLayout.EAST);
+        add(topPanel, BorderLayout.NORTH);
 
         textarea1 = new JTextArea();
+        textarea1.setFont(new Font("Serif", Font.PLAIN, 18));
+        textarea1.setForeground(Color.BLACK);
+        textarea1.setLineWrap(true);
         scrollpane1 = new JScrollPane(textarea1);
-        scrollpane1.setBounds(10, 50, 400, 300);
-        add(scrollpane1);
+        add(scrollpane1, BorderLayout.CENTER);
 
-        botonEnviar.setBounds(420, 10, 100, 30);
-        add(botonEnviar);
-        botonSalir.setBounds(420, 50, 100, 30);
-        add(botonSalir);
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        bottomPanel.add(botonSalir, BorderLayout.EAST);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         textarea1.setEditable(false);
         botonEnviar.addActionListener(this);
@@ -109,7 +115,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 for (Message message : messages) {
                     sb.append(message.getSender().getUsername()).append(": ")
                             .append(message.getContent()).append(" ")
-                            .append(" [" + message.getDate().format(formatter)).append("]" +"\n");
+                            .append(" | [" + message.getDate().format(formatter)).append("]" +"\n");
                 }
                 textarea1.setText(sb.toString());
             } catch (Exception e) {
