@@ -2,6 +2,7 @@ package org.sk.chattcp.client;
 
 import org.sk.chattcp.entity.Message;
 import org.sk.chattcp.entity.User;
+import org.sk.chattcp.functionality.connection.Conexion;
 import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
@@ -68,8 +69,9 @@ public class Client extends JFrame implements ActionListener, Runnable {
             System.exit(0);
         }
 
-        this.messageRepository = new MessageRepository();
-        this.userRepository = new UserRepository();
+        Conexion conexion = new Conexion();
+        this.messageRepository = new MessageRepository(conexion);
+        this.userRepository = new UserRepository(conexion);
     }
 
     // accion cuando pulsamos botones
@@ -123,7 +125,8 @@ public class Client extends JFrame implements ActionListener, Runnable {
     }
 
     public static void main(String args[]) {
-        UserRepository userRepository = new UserRepository();
+        Conexion conexion = new Conexion();
+        UserRepository userRepository = new UserRepository(conexion);
         String nombre = "";
         String password = "";
         int puerto = 44444;

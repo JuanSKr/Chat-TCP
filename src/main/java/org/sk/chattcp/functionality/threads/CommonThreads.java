@@ -6,6 +6,7 @@ import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class CommonThreads {
@@ -13,9 +14,9 @@ public class CommonThreads {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
 
-    public CommonThreads() {
-        this.userRepository = new UserRepository();
-        this.messageRepository = new MessageRepository();
+    public CommonThreads(UserRepository userRepository, MessageRepository messageRepository) {
+        this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
     }
 
     public void addConexion(Socket socket) {
@@ -33,11 +34,11 @@ public class CommonThreads {
         userRepository.save(user);
     }
 
-    public void sendMessage(User sender, User receiver, String content) {
+    public void sendMessage(User sender, String content) {
         Message message = new Message();
         message.setSender(sender);
-        message.setReceiver(receiver);
         message.setContent(content);
+        message.setDate(LocalDateTime.now());
         messageRepository.save(message);
     }
 }

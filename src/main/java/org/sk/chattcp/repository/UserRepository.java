@@ -1,42 +1,70 @@
 package org.sk.chattcp.repository;
 
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.sk.chattcp.entity.User;
-import org.sk.chattcp.functionality.hibernate.HibernateUtil;
+import org.sk.chattcp.functionality.connection.Conexion;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 public class UserRepository {
-    public User save(User user) {
-        Session session = HibernateUtil.openSession();
-        Transaction tx = session.beginTransaction();
-        session.save(user);
-        tx.commit();
-        session.close();
-        return user;
+
+    private Conexion conexion;
+
+    public UserRepository(Conexion conexion) {
+        this.conexion = conexion;
+        createTable();
+    }
+
+    public void createTable() {
+        try (Statement stmt = conexion.getConnection().createStatement()) {
+
+            String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS user (" +
+                    "    id               BIGINT AUTO_INCREMENT," +
+                    "    username VARCHAR(255) UNIQUE," +
+                    "    password VARCHAR(255)," +
+                    " PRIMARY KEY (id)" +
+                    ");";
+            stmt.executeUpdate(CREATE_TABLE_SQL);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
+
+    public void save(User user) {
+        try (PreparedStatement ps = conexion.getConnection().prepareStatement("INSERT INTO user (username, password) VALUES (?, ?)")) {
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public User findByUsername(String username) {
-        Session session = HibernateUtil.openSession();
-        User user = session.createQuery("from User where username = :username", User.class)
-                .setParameter("username", username)
-                .uniqueResult();
-        session.close();
-        return user;
+        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE username = ?")) {
+            ps.setString(1, username);
+            return ps.executeQuery().next() ? new User() : null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public User findById(Long id) {
-        Session session = HibernateUtil.openSession();
-        User user = session.get(User.class, id);
-        session.close();
-        return user;
+        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user WHERE id = ?")) {
+            ps.setLong(1, id);
+            return ps.executeQuery().next() ? new User() : null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void delete(User user) {
-        Session session = HibernateUtil.openSession();
-        Transaction tx = session.beginTransaction();
-        session.delete(user);
-        tx.commit();
-        session.close();
+    public List<User> findAll() {
+        try (PreparedStatement ps = conexion.getConnection().prepareStatement("SELECT * FROM user")) {
+            return ps.executeQuery().next() ? List.of(new User()) : List.of();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

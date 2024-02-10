@@ -19,11 +19,11 @@ public class ThreadServerChat extends Thread {
     UserRepository userRepository;
     MessageRepository messageRepository;
 
-    public ThreadServerChat(Socket s, CommonThreads comun) {
+    public ThreadServerChat(Socket s, CommonThreads comun, UserRepository userRepository, MessageRepository messageRepository) {
         this.socket = s;
         this.comun = comun;
-        this.userRepository = new UserRepository();
-        this.messageRepository = new MessageRepository();
+        this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
         try {
             // CREO FLUJO DE entrada para leer los mensajes
             fentrada = new DataInputStream(socket.getInputStream());
@@ -42,12 +42,10 @@ public class ThreadServerChat extends Thread {
                     break;
                 }
                 String[] parts = cadena.split(":");
-                User sender = userRepository.findByUsername(parts[0]);
-                User receiver = userRepository.findByUsername(parts[1]);
-                String content = parts[2];
+                User sender = userRepository.findById(Long.parseLong(parts[0]));
+                String content = parts[1];
                 Message message = new Message();
                 message.setSender(sender);
-                message.setReceiver(receiver);
                 message.setContent(content);
                 message.setDate(LocalDateTime.now());
                 messageRepository.save(message);
@@ -74,7 +72,7 @@ public class ThreadServerChat extends Thread {
                 try {
                     DataOutputStream fsalida = new DataOutputStream(s.getOutputStream());
                     for (Message message : messages) {
-                        fsalida.writeUTF(message.getSender().getUsername() + ":" + message.getReceiver().getUsername() + ":" + message.getContent());
+                        fsalida.writeUTF(message.getSender().getUsername() + ":" + message.getContent());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
