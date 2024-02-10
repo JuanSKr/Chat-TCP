@@ -14,6 +14,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Client extends JFrame implements ActionListener, Runnable {
@@ -103,9 +104,12 @@ public class Client extends JFrame implements ActionListener, Runnable {
             try {
                 List<Message> messages = messageRepository.findAll();
                 StringBuilder sb = new StringBuilder();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
                 for (Message message : messages) {
-                    sb.append(message.getSender().getUsername()).append(": ").
-                            append(message.getContent()).append("\n");
+                    sb.append(message.getSender().getUsername()).append(": ")
+                            .append(message.getContent()).append(" ")
+                            .append(" [" + message.getDate().format(formatter)).append("]" +"\n");
                 }
                 textarea1.setText(sb.toString());
             } catch (Exception e) {
