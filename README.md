@@ -5,6 +5,7 @@ La interfaz gráfica ha sido creada con Swing. La aplicación cuenta con dos ven
 
 ## Base de datos
 La aplicación utiliza una base de datos MySQL para almacenar la información de los usuarios y los mensajes. La base de datos se compone de dos tablas: user y message.
+He exportado la BBDD y he guardado el .sql en la carpeta db del proyecto.
 
 ## Tabla user
 La tabla user almacena la información de los usuarios. Cada fila representa a un usuario y tiene las siguientes columnas:  

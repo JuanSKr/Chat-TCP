@@ -44,6 +44,8 @@ public class MessageRepository {
         }
     }
 
+    // CRUD
+
     public void save(Message message) {
         PreparedStatement ps = null;
         try {

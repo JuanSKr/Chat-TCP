@@ -27,7 +27,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
 
     static JTextField txtMensaje = new JTextField();
     private JScrollPane scrollpane1;
-    static JTextArea textarea1;
+    static JTextArea msgTextArea;
     JButton botonEnviar = new JButton("Enviar");
     JButton botonSalir = new JButton("Salir");
     boolean repetir = true;
@@ -46,11 +46,11 @@ public class Client extends JFrame implements ActionListener, Runnable {
         topPanel.add(botonEnviar, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
-        textarea1 = new JTextArea();
-        textarea1.setFont(new Font("Serif", Font.PLAIN, 18));
-        textarea1.setForeground(Color.BLACK);
-        textarea1.setLineWrap(true);
-        scrollpane1 = new JScrollPane(textarea1);
+        msgTextArea = new JTextArea();
+        msgTextArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        msgTextArea.setForeground(Color.BLACK);
+        msgTextArea.setLineWrap(true);
+        scrollpane1 = new JScrollPane(msgTextArea);
         add(scrollpane1, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
@@ -58,7 +58,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
         bottomPanel.add(botonSalir, BorderLayout.EAST);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        textarea1.setEditable(false);
+        msgTextArea.setEditable(false);
         botonEnviar.addActionListener(this);
         botonSalir.addActionListener(this);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -121,7 +121,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
                             .append(message.getContent()).append(" ")
                             .append(" | [" + message.getDate().format(formatter)).append("]" +"\n");
                 }
-                textarea1.setText(sb.toString());
+                msgTextArea.setText(sb.toString());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Fallo servidor\n" + e.getMessage(),
                         "<<MENSAJE DE ERROR:2>>", JOptionPane.ERROR_MESSAGE);

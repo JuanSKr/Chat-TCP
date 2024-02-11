@@ -43,6 +43,8 @@ public class UserRepository {
         }
     }
 
+    // CRUD
+
     public void save(User user) {
         PreparedStatement ps = null;
         try {

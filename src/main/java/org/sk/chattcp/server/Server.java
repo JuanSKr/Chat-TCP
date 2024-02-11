@@ -15,11 +15,14 @@ public class Server {
         int puerto = 44444;
         ServerSocket servidor=null;
         Conexion conexion = new Conexion();
+        // Inicializo los repositorios
         UserRepository userRepository = new UserRepository(conexion);
         MessageRepository messageRepository = new MessageRepository(conexion);
-        userRepository.createTable(); // Crear tabla de usuarios
-        messageRepository.createTable(); // Crear tabla de mensajes
-        CommonThreads comun=new CommonThreads(userRepository, messageRepository); // Aqui se pasa userRepository y messageRepository al constructor
+        // Creo las tablas
+        userRepository.createTable();
+        messageRepository.createTable();
+        // Creo el objeto CommonThreads con los repositorios
+        CommonThreads comun=new CommonThreads(userRepository, messageRepository);
         try {
             servidor = new ServerSocket(puerto);
             System.out.println("Servidor en marcha...");

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class CommonThreads {
     ArrayList<Socket> conexiones = new ArrayList<>();
-    private final UserRepository userRepository;
-    private final MessageRepository messageRepository;
+    private UserRepository userRepository;
+    private MessageRepository messageRepository;
 
     public CommonThreads(UserRepository userRepository, MessageRepository messageRepository) {
         this.userRepository = userRepository;
@@ -25,20 +25,5 @@ public class CommonThreads {
 
     public void delConexion(Socket socket) {
         conexiones.remove(socket);
-    }
-
-    public void createUser(String username, String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        userRepository.save(user);
-    }
-
-    public void sendMessage(User sender, String content) {
-        Message message = new Message();
-        message.setSender(sender);
-        message.setContent(content);
-        message.setDate(LocalDateTime.now());
-        messageRepository.save(message);
     }
 }
