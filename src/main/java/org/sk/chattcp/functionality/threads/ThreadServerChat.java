@@ -47,7 +47,6 @@ public class ThreadServerChat extends Thread {
                     message.setContent(content);
                     message.setDate(LocalDateTime.now());
                     messageRepository.save(message);
-                    messagesToAll();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -60,23 +59,6 @@ public class ThreadServerChat extends Thread {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    // Envia los mensajes a todos los clientes
-    private void messagesToAll() {
-        List<Message> messages = messageRepository.findAll();
-        for (Socket s : comun.conexiones) {
-            if (!s.isClosed()) {
-                try {
-                    DataOutputStream fsalida = new DataOutputStream(s.getOutputStream());
-                    for (Message message : messages) {
-                        fsalida.writeUTF(message.getSender().getUsername() + ": " + message.getContent());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }
