@@ -6,11 +6,9 @@ import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class ThreadServerChat extends Thread {
     DataInputStream fentrada;

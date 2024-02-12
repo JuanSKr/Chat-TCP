@@ -215,7 +215,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
         }
 
         try {
-            s = new Socket("localhost", 44444);
+            s = new Socket("localhost", puerto);
             Client cliente = new Client(s, Client.currentUser);
             cliente.setBounds(0, 0, 840, 620);
             cliente.setVisible(true);

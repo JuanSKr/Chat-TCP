@@ -33,13 +33,12 @@ public class Server {
 
                 comun.addConexion(socket);
 
+                // Creo un hilo que crea un nuevo socket para el cliente
                 ThreadServerChat hilo = new ThreadServerChat(socket, comun, userRepository, messageRepository);
                 hilo.start();
             }
-            //servidor.close();
-
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error en el servidor: " + e.getMessage());
         }
         System.out.println("Servidor iniciado...");
     }
