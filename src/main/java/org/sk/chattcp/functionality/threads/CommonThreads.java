@@ -1,12 +1,9 @@
 package org.sk.chattcp.functionality.threads;
 
-import org.sk.chattcp.entity.Message;
-import org.sk.chattcp.entity.User;
 import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class CommonThreads {

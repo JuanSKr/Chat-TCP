@@ -37,11 +37,6 @@ public class ThreadServerChat extends Thread {
         while (true) {
             try {
                 String cadena = fentrada.readUTF(); //Lee el mensaje enviado por el cliente
-
-                if (cadena.trim().equals("*")) {// El cliente se desconecta
-                    comun.delConexion(socket);
-                    break;
-                }
                 String[] parts = cadena.split(":");
                 // Verifica si el String es un numero antes de intentar convertirlo
                 if (parts[0].matches("\\d+")) {

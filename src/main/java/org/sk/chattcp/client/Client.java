@@ -79,15 +79,15 @@ public class Client extends JFrame implements ActionListener, Runnable {
         this.userRepository = new UserRepository(conexion);
     }
 
-    // accion cuando pulsamos botones
+    // Eventos de los botones: Enviar y Salir
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botonEnviar) { // SE PULSA EL ENVIAR
             String content = txtMensaje.getText().trim();
-            if (content.isEmpty()) {
+            if (content.isEmpty()) { // Comprueba si el mensaje está vacío
                 JOptionPane.showMessageDialog(this, "No puedes enviar un mensaje vacio", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (Client.currentUser == null) {
+            if (Client.currentUser == null) { // Comprueba si el usuario está logueado
                 throw new RuntimeException("User not found: " + Client.currentUser.getUsername());
             }
             Message message = new Message();
@@ -96,19 +96,20 @@ public class Client extends JFrame implements ActionListener, Runnable {
             message.setContent(content);
             message.setDate(LocalDateTime.now());
             messageRepository.save(message);
+
             txtMensaje.setText("");
         }
         if (e.getSource() == botonSalir) { // SE PULSA BOTON SALIR
             try {
                 fsalida.writeUTF("*");
                 repetir = false; // Para salir del bucle
-                // Agrega el mensaje a la interfaz de usuario del cliente
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
     }
 
+    // Ejectuta el hilo del cliente y recibe los mensajes desde la base de datos
     public void run() {
         while (repetir) {
             try {
@@ -139,7 +140,8 @@ public class Client extends JFrame implements ActionListener, Runnable {
         }
     }
 
-    public static void main(String args[]) {
+    // Register - Login - Conexion con el servidor
+    public static void main(String[] args) {
         Conexion conexion = new Conexion();
         UserRepository userRepository = new UserRepository(conexion);
         String nombre = "";
