@@ -32,6 +32,9 @@ public class Client extends JFrame implements ActionListener, Runnable {
     JButton botonSalir = new JButton("Salir");
     boolean repetir = true;
 
+    JFrame serverSelection = new JFrame();
+
+
     MessageRepository messageRepository;
     UserRepository userRepository;
 
@@ -144,11 +147,34 @@ public class Client extends JFrame implements ActionListener, Runnable {
     public static void main(String[] args) {
         Conexion conexion = new Conexion();
         UserRepository userRepository = new UserRepository(conexion);
-        String nombre = "";
+        String name = "";
         String password = "";
-        int puerto = 44444;
+        String ip = null;
+        int port = 44444;
         Socket s = null;
         User currentUser = null;
+
+        // Obtener IP y Puerto que escribe el usuario
+        JPanel panelConnection = new JPanel(new GridLayout(2, 2));
+        JTextField ipField = new JTextField();
+        JTextField portField = new JTextField();
+        panelConnection.add(new JLabel("IP:"));
+        panelConnection.add(ipField);
+        panelConnection.add(new JLabel("Puerto:"));
+        panelConnection.add(portField);
+        
+        int resultConnection = JOptionPane.showConfirmDialog(null, panelConnection, "Conexión con un servidor", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (resultConnection == JOptionPane.OK_OPTION) {
+            ip = ipField.getText();
+            try {
+                port = Integer.parseInt(portField.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "El puerto debe ser un número");
+                System.exit(0);
+            }
+        } else {
+            System.exit(0);
+        }
 
         while (true) {
             Object[] options = {"Registrarse", "Iniciar sesion"};
@@ -165,21 +191,21 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 panel.add(passwordField);
                 int result = JOptionPane.showConfirmDialog(null, panel, "Registro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    nombre = usernameField.getText();
+                    name = usernameField.getText();
                     password = new String(passwordField.getPassword());
-                    if (nombre.trim().isEmpty() || password.trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "El nombre y la contraseña no pueden estar vacíos");
+                    if (name.trim().isEmpty() || password.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "El name y la contraseña no pueden estar vacíos");
                         continue;
                     }
                     User user = new User();
-                    user.setUsername(nombre);
+                    user.setUsername(name);
                     user.setPassword(password);
                     try {
                         userRepository.save(user);
-                        Client.currentUser = userRepository.findByUsername(nombre);
+                        Client.currentUser = userRepository.findByUsername(name);
                         break;
                     } catch (RuntimeException e) {
-                        JOptionPane.showMessageDialog(null, "El nombre de usuario ya existe");
+                        JOptionPane.showMessageDialog(null, "El name de usuario ya existe");
                     }
                 }
             } else if (option == 1) { // Iniciar sesion
@@ -192,13 +218,13 @@ public class Client extends JFrame implements ActionListener, Runnable {
                 panel.add(passwordField);
                 int result = JOptionPane.showConfirmDialog(null, panel, "Inicio de sesión", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    nombre = usernameField.getText();
+                    name = usernameField.getText();
                     password = new String(passwordField.getPassword());
-                    if (nombre.trim().isEmpty() || password.trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "El nombre y la contraseña no pueden estar vacíos");
+                    if (name.trim().isEmpty() || password.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "El name y la contraseña no pueden estar vacíos");
                         continue;
                     }
-                    User user = userRepository.findByUsername(nombre);
+                    User user = userRepository.findByUsername(name);
                     if (user != null && password.equals(user.getPassword())) {
                         Client.currentUser = user;
                         break;
@@ -209,13 +235,14 @@ public class Client extends JFrame implements ActionListener, Runnable {
             }
         }
 
-        if (nombre.trim().isEmpty()) {
-            System.out.println("El nombre no puede estar vacío...");
+
+        if (name.trim().isEmpty()) {
+            System.out.println("El name no puede estar vacío...");
             return;
         }
 
         try {
-            s = new Socket("localhost", puerto);
+            s = new Socket(ip, port);
             Client cliente = new Client(s, Client.currentUser);
             cliente.setBounds(0, 0, 840, 620);
             cliente.setVisible(true);
