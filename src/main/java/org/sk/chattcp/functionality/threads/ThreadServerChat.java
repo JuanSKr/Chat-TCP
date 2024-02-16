@@ -1,11 +1,13 @@
 package org.sk.chattcp.functionality.threads;
 
+import org.sk.chattcp.client.Client;
 import org.sk.chattcp.entity.Message;
 import org.sk.chattcp.entity.User;
 import org.sk.chattcp.repository.MessageRepository;
 import org.sk.chattcp.repository.UserRepository;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.LocalDateTime;
@@ -32,29 +34,31 @@ public class ThreadServerChat extends Thread {
     }
 
     public void run() {
-        while (true) {
-            try {
-                String cadena = fentrada.readUTF(); //Lee el mensaje enviado por el cliente
-                String[] parts = cadena.split(":");
-                // Verifica si el String es un numero antes de intentar convertirlo
-                if (parts[0].matches("\\d+")) {
-                    User sender = userRepository.findById(Integer.parseInt(parts[0]));
-                    String content = parts[1];
-                    Message message = new Message();
-                    message.setSender(sender);
-                    message.setContent(content);
-                    message.setDate(LocalDateTime.now());
-                    messageRepository.save(message);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }
-        }
-
-        // se cierra el socket del cliente
         try {
-            socket.close();
+            // Recibir el mensaje del cliente
+            DataInputStream fentrada = new DataInputStream(socket.getInputStream());
+            String received = fentrada.readUTF();
+
+            // Dividir el mensaje entrante en el nombre de usuario y el contenido del mensaje
+            String username = received.split(":")[0];
+            String content = received.split(":")[1];
+
+            // Buscar el usuario en la base de datos
+            User sender = userRepository.findByUsername(username);
+            if (sender == null) {
+                throw new RuntimeException("User not found: " + username);
+            }
+
+            // Guardar el mensaje en la base de datos
+            Message message = new Message();
+            message.setSender(sender);
+            message.setContent(content);
+            message.setDate(LocalDateTime.now());
+            messageRepository.save(message);
+
+            // Enviar el mensaje al cliente
+            DataOutputStream fsalida = new DataOutputStream(socket.getOutputStream());
+            fsalida.writeUTF(content);
         } catch (IOException e) {
             e.printStackTrace();
         }

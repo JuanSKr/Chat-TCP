@@ -23,7 +23,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
     Socket socket = null;
     DataInputStream fentrada;
     DataOutputStream fsalida;
-    static User currentUser;
+    public static User currentUser;
 
     static JTextField txtMensaje = new JTextField();
     private JScrollPane scrollpane1;
@@ -93,13 +93,11 @@ public class Client extends JFrame implements ActionListener, Runnable {
             if (Client.currentUser == null) { // Comprueba si el usuario está logueado
                 throw new RuntimeException("User not found: " + Client.currentUser.getUsername());
             }
-            Message message = new Message();
-            message.setSender(Client.currentUser);
-            System.out.println("Client.currentUser: " + Client.currentUser.getUsername() + " - " + Client.currentUser.getId());
-            message.setContent(content);
-            message.setDate(LocalDateTime.now());
-            messageRepository.save(message);
-
+            try {
+                fsalida.writeUTF(Client.currentUser.getUsername() + ":" + content);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             txtMensaje.setText("");
         }
         if (e.getSource() == botonSalir) { // SE PULSA BOTON SALIR
@@ -162,7 +160,7 @@ public class Client extends JFrame implements ActionListener, Runnable {
         panelConnection.add(ipField);
         panelConnection.add(new JLabel("Puerto:"));
         panelConnection.add(portField);
-        
+
         int resultConnection = JOptionPane.showConfirmDialog(null, panelConnection, "Conexión con un servidor", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (resultConnection == JOptionPane.OK_OPTION) {
             ip = ipField.getText();
