@@ -14,7 +14,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -33,7 +32,6 @@ public class Client extends JFrame implements ActionListener, Runnable {
     boolean repetir = true;
 
     JFrame serverSelection = new JFrame();
-
 
     MessageRepository messageRepository;
     UserRepository userRepository;

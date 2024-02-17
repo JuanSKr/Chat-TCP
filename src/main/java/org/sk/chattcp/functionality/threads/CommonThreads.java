@@ -23,4 +23,8 @@ public class CommonThreads {
     public void delConexion(Socket socket) {
         conexiones.remove(socket);
     }
+
+
+
+
 }

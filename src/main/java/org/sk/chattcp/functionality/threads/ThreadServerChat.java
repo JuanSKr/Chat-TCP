@@ -39,26 +39,44 @@ public class ThreadServerChat extends Thread {
             DataInputStream fentrada = new DataInputStream(socket.getInputStream());
             String received = fentrada.readUTF();
 
-            // Dividir el mensaje entrante en el nombre de usuario y el contenido del mensaje
-            String username = received.split(":")[0];
-            String content = received.split(":")[1];
+            // Dividir el mensaje entrante en partes
+            String[] parts = received.split(":");
+            String command = parts[0];
+            String username = parts[1];
+            String password = parts[2];
 
-            // Buscar el usuario en la base de datos
-            User sender = userRepository.findByUsername(username);
-            if (sender == null) {
-                throw new RuntimeException("User not found: " + username);
+            if (command.equals("LOGIN")) {
+                // Buscar el usuario en la base de datos
+                User user = userRepository.findByUsername(username);
+                if (user != null && password.equals(user.getPassword())) {
+                    // Enviar la lista de usuarios al cliente
+                    DataOutputStream fsalida = new DataOutputStream(socket.getOutputStream());
+                    fsalida.writeUTF("USERS:" + userRepository.findAll());
+                }
+            } else if (command.equals("REGISTER")) {
+                // Registrar el nuevo usuario en la base de datos
+                User user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
+                userRepository.save(user);
+            } else {
+                // Buscar el usuario en la base de datos
+                User sender = userRepository.findByUsername(username);
+                if (sender == null) {
+                    throw new RuntimeException("User not found: " + username);
+                }
+
+                // Guardar el mensaje en la base de datos
+                Message message = new Message();
+                message.setSender(sender);
+                message.setContent(received);
+                message.setDate(LocalDateTime.now());
+                messageRepository.save(message);
+
+                // Enviar el mensaje al cliente
+                DataOutputStream fsalida = new DataOutputStream(socket.getOutputStream());
+                fsalida.writeUTF(received);
             }
-
-            // Guardar el mensaje en la base de datos
-            Message message = new Message();
-            message.setSender(sender);
-            message.setContent(content);
-            message.setDate(LocalDateTime.now());
-            messageRepository.save(message);
-
-            // Enviar el mensaje al cliente
-            DataOutputStream fsalida = new DataOutputStream(socket.getOutputStream());
-            fsalida.writeUTF(content);
         } catch (IOException e) {
             e.printStackTrace();
         }

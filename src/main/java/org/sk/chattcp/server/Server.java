@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Server {
     public static void main(String[] args){
         int puerto = 44444;
-        ServerSocket servidor=null;
+        ServerSocket servidor = null;
         Conexion conexion = new Conexion();
         // Inicializo los repositorios
         UserRepository userRepository = new UserRepository(conexion);
@@ -27,14 +27,13 @@ public class Server {
         userRepository.createTable();
         messageRepository.createTable();
         // Creo el objeto CommonThreads con los repositorios
-        CommonThreads comun=new CommonThreads(userRepository, messageRepository);
+        CommonThreads comun = new CommonThreads(userRepository, messageRepository);
         try {
             servidor = new ServerSocket(puerto);
             System.out.println("Servidor en marcha...");
 
             while (true) {
-                Socket socket = new Socket();
-                socket = servidor.accept();// esperando cliente
+                Socket socket = servidor.accept(); // esperando cliente
 
                 comun.addConexion(socket);
 
