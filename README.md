@@ -1,30 +1,34 @@
 # Chat-TCP
 
-## Interfaz Gráfica
-La interfaz gráfica ha sido creada con Swing. La aplicación cuenta con dos ventanas: una para el registro y otra para el chat.
+## Introduction
+Chat-TCP is a Java application designed for real-time communication over a TCP connection. This project implements a graphical user interface (GUI) using Swing, allowing users to register, log in, and exchange messages seamlessly.
 
-## Base de datos
-La aplicación utiliza una base de datos MySQL para almacenar la información de los usuarios y los mensajes. La base de datos se compone de dos tablas: user y message.
-He exportado la BBDD y he guardado el .sql en la carpeta db del proyecto.
+## Features
+- **Graphical User Interface**: The application features an intuitive GUI built with Swing, providing a user-friendly experience.
+- **Secure User Authentication**: Users can securely register and log in using unique usernames and passwords.
+- **MySQL Database Integration**: Chat-TCP utilizes a MySQL database to store user information and messages efficiently.
+- **Message Exchange**: Users can send and receive messages in real-time, facilitating seamless communication.
 
-## Tabla user
-La tabla user almacena la información de los usuarios. Cada fila representa a un usuario y tiene las siguientes columnas:  
-### id:
-Un número entero que se autoincrementa y sirve como identificador único para cada usuario.
-### username: 
-Un VARCHAR que almacena el nombre de usuario. Este valor es único para cada usuario.
-### password:
-Un VARCHAR que almacena la contraseña del usuario.
+## Installation
+To run Chat-TCP locally, follow these steps:
+1. Clone the repository to your local machine.
+2. Ensure you have MySQL installed, and import the provided database file located in the `db` folder.
+3. Compile the Java files using any Java compiler.
+4. Run the application and start chatting!
 
-## Tabla message
-La tabla message almacena los mensajes enviados por los usuarios. Cada fila representa un mensaje y tiene las siguientes columnas:  
-### id:
-Un número entero que se autoincrementa y sirve como identificador único para cada mensaje.
-### sender_id:
-Un número entero que hace referencia al id del usuario que envió el mensaje. Esta columna establece una relación de Foreign Key con la columna id de la tabla user.
-### content:
-Un VARCHAR que almacena el contenido del mensaje.
-### date:
-Un campo de tipo DATE que almacena la fecha y hora en que se envió el mensaje.
+## Database Schema
+The MySQL database consists of two tables: `user` and `message`.
 
-## Juan Castaño Gomariz
+### Table `user`
+- **id**: An auto-incremented integer serving as a unique identifier for each user.
+- **username**: A VARCHAR field storing the unique username for each user.
+- **password**: A VARCHAR field storing the hashed password for user authentication.
+
+### Table `message`
+- **id**: An auto-incremented integer serving as a unique identifier for each message.
+- **sender_id**: An integer referencing the id of the user who sent the message, establishing a Foreign Key relationship with the `id` column of the `user` table.
+- **content**: A VARCHAR field storing the message content.
+- **date**: A DATE field storing the timestamp when the message was sent.
+
+## About This Project
+Chat-TCP is a project developed for the Programming of Services and Processes course. It aims to provide a practical implementation of TCP communication while integrating various programming concepts.
